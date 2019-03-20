@@ -1,4 +1,4 @@
-export class Node {
+class Node {
 
     constructor(x,y,id){
         this.x = x;

@@ -5,12 +5,22 @@
     <meta http-equiv="Content-Language" content="fr"/>
     <title>Graph editor</title>
   </head>
+
+  <style media="screen">
+    #graph_editor_canvas{
+      border: 2px solid black;
+    }
+  </style>
+
   <body>
       <div class="content">
         <h1 id="graph_editor_title">Graph Editor</h2>
-        <canvas id="graph_editor_canvas" width="1000" height="1000" style="margin-left:40px;">
+        <canvas id="graph_editor_canvas" width="1000" height="500">
         </canvas>
       </div>
    <script src="graph_editor.js"></script>
+   <script src="./graph.js"></script>
+   <script src="./node.js"></script>
+
   </body>
 </html>

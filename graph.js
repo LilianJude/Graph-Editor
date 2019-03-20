@@ -1,4 +1,4 @@
-export class Graph {
+class Graph {
 
     constructor(name){
         this.name = name;
