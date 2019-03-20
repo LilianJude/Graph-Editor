@@ -1,4 +1,4 @@
-export class Edge {
+class Edge {
 
     constructor(nodeBegin, nodeEnd){
         this.nodeBegin = nodeBegin;
