@@ -16,23 +16,28 @@ function isIntersect(point, node, factor) {
 function addNode(e) {
   var x = e.pageX - elemLeft;
   var y = e.pageY - elemTop;
-
   var node = new Node(x, y, id, false);
   id = id + 1;
-
   graph.nodeList.push(node);
+  drawCircle(x,y,"green");
+}
 
-  ctx.fillStyle ="green"
+function removeNode(node){
+  graph.nodeList.pop(node);
+}
+
+function clearCircle(x,y) {
+  ctx.beginPath();
+  ctx.clearRect(x - rad - 1, y - rad - 1, rad * 2 + 2, rad * 2 + 2);
+  ctx.closePath();
+}
+
+function drawCircle(x,y,color){
+  ctx.fillStyle =color;
   ctx.beginPath();
   ctx.arc(x,y,rad,0,Math.PI*2);
   ctx.stroke();
   ctx.fill();
-}
-
-function clearCircle(ctx,x,y,radius) {
-  ctx.beginPath();
-  ctx.clearRect(x - radius - 1, y - radius - 1, radius * 2 + 2, radius * 2 + 2);
-  ctx.closePath();
 }
 
 canvas.addEventListener('mousedown', (e) => {
@@ -49,12 +54,17 @@ canvas.addEventListener('mousedown', (e) => {
       if(isIntersect(mousePos, node, 2)){
         intersect = true;
         if(isIntersect(mousePos, node, 1)){
+<<<<<<< HEAD
           clearCircle(ctx, node.x, node.y, rad);
           ctx.fillStyle ="red"
           ctx.beginPath();
           ctx.arc(node.x,node.y,rad,0,Math.PI*2);
           ctx.stroke();
           ctx.fill();
+=======
+          clearCircle(node.x,node.y);
+          drawCircle(node.x, node.y, "red");
+>>>>>>> 1088f0632301a2723395cb91dca161b1df961d27
         }
       }
     });
