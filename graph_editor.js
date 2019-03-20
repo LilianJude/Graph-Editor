@@ -50,6 +50,11 @@ canvas.addEventListener('mousedown', (e) => {
         intersect = true;
         if(isIntersect(mousePos, node, 1)){
           clearCircle(ctx, node.x, node.y, rad);
+          ctx.fillStyle ="red"
+          ctx.beginPath();
+          ctx.arc(node.x,node.y,rad,0,Math.PI*2);
+          ctx.stroke();
+          ctx.fill();
         }
       }
     });
