@@ -7,6 +7,8 @@ var id = 0;
 var rad = 20;
 var nodeList = [];
 
+var selectedNode1, selectedNode2;
+
 var graph = new Graph("graph");
 
 function isIntersect(point, node, factor) {
@@ -40,6 +42,28 @@ function drawCircle(x,y,color){
   ctx.fill();
 }
 
+function selectCircle(node, color){
+  clearCircle(node.x, node.y);
+  drawCircle(node.x, node.y, color);
+  node.isSelect = true
+  if(selectedNode1 == 'undefined'){
+    selectedNode1 = node;
+    alert("1");
+  }else if(selectedNode1 == 'undefined'){
+    selectedNode2 = node;
+    alert("2");
+  }else{
+    unselectCircle(selectedNode1, "green");
+    selectedNode1 = node;
+    alert("vert");
+  }
+}
+
+function unselectCircle(node, color){
+  clearCircle(node.x, node.y);
+  drawCircle(node.x, node.y, color);
+}
+
 canvas.addEventListener('mousedown', (e) => {
   const mousePos = {
     x: e.pageX - elemLeft,
@@ -54,17 +78,7 @@ canvas.addEventListener('mousedown', (e) => {
       if(isIntersect(mousePos, node, 2)){
         intersect = true;
         if(isIntersect(mousePos, node, 1)){
-<<<<<<< HEAD
-          clearCircle(ctx, node.x, node.y, rad);
-          ctx.fillStyle ="red"
-          ctx.beginPath();
-          ctx.arc(node.x,node.y,rad,0,Math.PI*2);
-          ctx.stroke();
-          ctx.fill();
-=======
-          clearCircle(node.x,node.y);
-          drawCircle(node.x, node.y, "red");
->>>>>>> 1088f0632301a2723395cb91dca161b1df961d27
+          selectCircle(node, "red");
         }
       }
     });
