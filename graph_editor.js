@@ -28,10 +28,13 @@ function removeNode(node){
   graph.nodeList.pop(node);
 }
 
-function clearCircle(x,y) {
-  ctx.beginPath();
-  ctx.clearRect(x - rad - 1, y - rad - 1, rad * 2 + 2, rad * 2 + 2);
-  ctx.closePath();
+function clearArc(context, x, y, radius) {
+  context.save();
+  context.globalCompositeOperation = 'destination-out';
+  context.beginPath();
+  context.arc(x, y, radius, 0, 2 * Math.PI, false);
+  context.fill();
+  context.restore();
 }
 
 function drawCircle(x,y,color){
@@ -42,26 +45,32 @@ function drawCircle(x,y,color){
   ctx.fill();
 }
 
-function selectCircle(node, color){
-  clearCircle(node.x, node.y);
-  drawCircle(node.x, node.y, color);
-  node.isSelect = true
-  if(selectedNode1 == 'undefined'){
+function selectCircle(node){
+  if(selectedNode1 == undefined ){
     selectedNode1 = node;
-    alert("1");
-  }else if(selectedNode1 == 'undefined'){
+    clearArc(ctx, node.x, node.y, rad);
+    drawCircle(node.x, node.y, "red");
+    node.isSelect = true
+  }else if(selectedNode2 == undefined){
     selectedNode2 = node;
-    alert("2");
-  }else{
-    unselectCircle(selectedNode1, "green");
-    selectedNode1 = node;
-    alert("vert");
+    clearArc(ctx, node.x, node.y, rad);
+    drawCircle(node.x, node.y, "red");
+    node.isSelect = true
   }
 }
 
-function unselectCircle(node, color){
-  clearCircle(node.x, node.y);
-  drawCircle(node.x, node.y, color);
+function unselectCircle(node){
+  if(node == selectedNode1){
+    selectedNode1 = null;
+    clearArc(ctx, node.x, node.y, rad + 1.25);
+    drawCircle(node.x, node.y, "green");
+    node.isSelect = false;
+  } else if(node == selectedNode2){
+    selectedNode2 = null;
+    clearArc(ctx, node.x, node.y, rad + 1.25);
+    drawCircle(node.x, node.y, "green");
+    node.isSelect = false;
+  }
 }
 
 canvas.addEventListener('mousedown', (e) => {
@@ -78,13 +87,17 @@ canvas.addEventListener('mousedown', (e) => {
       if(isIntersect(mousePos, node, 2)){
         intersect = true;
         if(isIntersect(mousePos, node, 1)){
-          selectCircle(node, "red");
+          if(node.isSelect == false){
+            selectCircle(node);
+          }else{
+            unselectCircle(node);
+          }
         }
       }
     });
-  }
-  if(intersect==false){
-    addNode(e);
+    if(intersect == false && graph.nodeList.length > 0){
+      addNode(e);
+    }
   }
 });
 
