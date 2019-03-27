@@ -21,7 +21,7 @@ function addNode(e) {
   var node = new Node(x, y, id, false);
   id = id + 1;
   graph.nodeList.push(node);
-  drawCircle(x,y,"green");
+  drawCircle(node,x,y,"green");
 }
 
 function removeNode(node){
@@ -37,25 +37,40 @@ function clearArc(context, x, y, radius) {
   context.restore();
 }
 
-function drawCircle(x,y,color){
-  ctx.fillStyle =color;
+function drawCircle(node,x,y,color){
+  ctx.fillStyle=color;
   ctx.beginPath();
   ctx.arc(x,y,rad,0,Math.PI*2);
   ctx.stroke();
   ctx.fill();
+  ctx.fillStyle="white";
+  ctx.font = "15px Georgia";
+  ctx.fillText(node.id, x-5, y+2);
+}
+
+function drawSegment(node1, node2){
+  ctx.fillStyle="black";
+  ctx.moveTo(node1.x, node1.y);
+  ctx.lineTo(node2.x, node2.y);
+  ctx.stroke();
 }
 
 function selectCircle(node){
   if(selectedNode1 == undefined ){
     selectedNode1 = node;
     clearArc(ctx, node.x, node.y, rad);
-    drawCircle(node.x, node.y, "red");
+    drawCircle(node, node.x, node.y, "red");
     node.isSelect = true
   }else if(selectedNode2 == undefined){
     selectedNode2 = node;
     clearArc(ctx, node.x, node.y, rad);
-    drawCircle(node.x, node.y, "red");
+    drawCircle(node, node.x, node.y, "red");
     node.isSelect = true
+  }
+  if(selectedNode1 != undefined && selectedNode2 != undefined){
+    drawSegment(selectedNode1, selectedNode2);
+    unselectCircle(selectedNode1);
+    unselectCircle(selectedNode2);
   }
 }
 
@@ -63,17 +78,17 @@ function unselectCircle(node){
   if(node == selectedNode1){
     selectedNode1 = null;
     clearArc(ctx, node.x, node.y, rad + 1.25);
-    drawCircle(node.x, node.y, "green");
+    drawCircle(node, node.x, node.y, "green");
     node.isSelect = false;
   } else if(node == selectedNode2){
     selectedNode2 = null;
     clearArc(ctx, node.x, node.y, rad + 1.25);
-    drawCircle(node.x, node.y, "green");
+    drawCircle(node, node.x, node.y, "green");
     node.isSelect = false;
   }
 }
 
-canvas.addEventListener('mousedown', (e) => {
+canvas.addEventListener('mouseup', (e) => {
   const mousePos = {
     x: e.pageX - elemLeft,
     y: e.pageY - elemTop
