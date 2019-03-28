@@ -17,24 +17,25 @@ class Graph {
         console.log("The graph's name is now " + this.name);
     };
 
-    addNode(node){
-        console.log("The node number " + node.name + " has been added to the list.");
+    addNode(x,y,id){
+        var node = new Node(x,y,id);
+        console.log("The node number " + node.id + " has been added to the list.");
         this.nodeList.push(node);
     };
 
     deleteNode(node){
-        console.log("The node " + node.name + " has been removed from the list.");
+        console.log("The node " + node.id + " has been removed from the list.");
         this.nodeList.pop(node);
     };
 
     addEdge(nodeA, nodeB){
         var edge = new Edge(nodeA, nodeB);
         this.edgeList.push(edge);
-        console.log("The edge between " + nodeA.name + " and " + nodeB.name + " has been added to the list.");
+        console.log("The edge between " + nodeA.id + " and " + nodeB.id + " has been added to the list.");
     };
 
     deleteEdge(edge){
-        console.log("The edge between " + edge.nodeBegin.name + " and " + edge.nodeEnd.name + " has been removed from the list.");
+        console.log("The edge between " + edge.nodeBegin.id + " and " + edge.nodeEnd.id + " has been removed from the list.");
         this.edgeList.pop(edge);
     };
 
