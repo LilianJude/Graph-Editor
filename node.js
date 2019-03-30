@@ -9,7 +9,7 @@ class Node {
 
     modifyID(id){
         this.id = id;
-        console.log("The node's id is now" + this.id);
+        console.log("The node's id is now " + this.id);
     };
 
     modifyPosition(x,y){

@@ -124,6 +124,26 @@ canvas.addEventListener('mouseup', (e) => {
     }
   }
 });
+
+canvas.addEventListener('dblclick', (e) => {
+  const mousePos = {
+    x: e.pageX - elemLeft,
+    y: e.pageY - elemTop
+  };
+  graph.nodeList.forEach(node => {
+  if(isIntersect(mousePos, node, 1)){
+    var result = -1;
+    while(result == -1){
+      var userInput = prompt('type something');
+      if(!isNaN(userInput)){
+        result = 1;
+        node.modifyID(userInput);
+      }
+    }
+  }
+  });
+});
+
 checkBox.addEventListener('change', (e) => {
   if (checkBox.checked == true){
     drawGraphOrientedMode();
