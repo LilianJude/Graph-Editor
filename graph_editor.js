@@ -128,5 +128,5 @@ checkBox.addEventListener('change', (e) => {
   if (checkBox.checked == true){
     drawGraphOrientedMode();
   }
-  
+
 });
