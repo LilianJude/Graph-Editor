@@ -5,6 +5,7 @@ class Node {
         this.y = y;
         this.id = id;
         this.isSelect = false;
+        this.isDragging = false;
     };
 
     modifyID(id){

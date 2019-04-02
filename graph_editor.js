@@ -6,13 +6,48 @@ var elemLeft = canvas.offsetLeft,
 
 var id = 0;
 var rad = 20;
+var dragok = false;
+var startX;
+var startY;
 
 var selectedNode1, selectedNode2;
 
 var graph = new Graph("graph");
 
+function rect(x, y, w, h) {
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.closePath();
+    ctx.fill();
+}
+
 function isIntersect(point, node, factor) {
   return Math.sqrt((point.x-node.x) ** 2 + (point.y - node.y) ** 2) < rad*factor;
+}
+
+function clear(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+function draw(){
+  clear();
+  ctx.fillStyle = "#FFFFFF";
+  rect(0, 0, canvas.width, canvas.height);
+  // redraw each rect in the rects[] array
+
+  for(var i = 0; i < graph.edgeList.length; i++){
+    var edge = graph.edgeList[i];
+    drawSegment(edge.nodeBegin, edge.nodeEnd);
+  }
+
+  for (var i = 0; i < graph.nodeList.length; i++) {
+      var node = graph.nodeList[i];
+      if(node.isSelect){
+        drawCircle(node.id, node.x, node.y, "red");
+      }else{
+        drawCircle(node.id, node.x, node.y, "green");
+      }
+  }
 }
 
 function addAndDrawNode(e) {
@@ -98,11 +133,14 @@ function drawGraphOrientedMode(){
   ctx.fill();
 }
 
-canvas.addEventListener('mouseup', (e) => {
+canvas.addEventListener('mousedown', (e) => {
   const mousePos = {
     x: e.pageX - elemLeft,
     y: e.pageY - elemTop
   };
+
+  dragok = false;
+
   var intersect = false;
   if(graph.nodeList.length == 0){
     addAndDrawNode(e);
@@ -111,6 +149,8 @@ canvas.addEventListener('mouseup', (e) => {
       if(isIntersect(mousePos, node, 2)){
         intersect = true;
         if(isIntersect(mousePos, node, 1)){
+          dragok = true;
+          node.isDragging = true;
           if(node.isSelect == false){
             selectCircle(node);
           }else{
@@ -122,7 +162,41 @@ canvas.addEventListener('mouseup', (e) => {
     if(intersect == false && graph.nodeList.length > 0){
       addAndDrawNode(e);
     }
+    startX = mousePos.x;
+    startY = mousePos.y;
   }
+});
+
+canvas.addEventListener('mouseup', (e) => {
+  dragok = false;
+  for(var i = 0; i < graph.nodeList.length; i++){
+    graph.nodeList[i].isDragging = false;
+  }
+});
+
+canvas.addEventListener('mousemove', (e) => {
+  const mousePos = {
+    x: e.pageX - elemLeft,
+    y: e.pageY - elemTop
+  };
+
+  if (dragok) {
+        var dx = mousePos.x - startX;
+        var dy = mousePos.y - startY;
+
+        for (var i = 0; i < graph.nodeList.length; i++) {
+            var node = graph.nodeList[i];
+            if (node.isDragging) {
+                node.x += dx;
+                node.y += dy;
+            }
+        }
+
+        draw();
+
+        startX = mousePos.x;
+        startY = mousePos.y;
+    }
 });
 
 canvas.addEventListener('dblclick', (e) => {
@@ -148,5 +222,4 @@ checkBox.addEventListener('change', (e) => {
   if (checkBox.checked == true){
     drawGraphOrientedMode();
   }
-
 });
