@@ -1,5 +1,7 @@
 var canvas = document.getElementById("graph_editor_canvas");
 var checkBox = document.getElementById("graphType");
+var exportButton = document.getElementById("export");
+checkBox.checked = false;
 var ctx = canvas.getContext('2d');
 var elemLeft = canvas.offsetLeft,
     elemTop = canvas.offsetTop;
@@ -12,7 +14,7 @@ var startY;
 
 var selectedNode1, selectedNode2;
 
-var graph = new Graph("graph");
+var graph = new Graph();
 
 function rect(x, y, w, h) {
     ctx.beginPath();
@@ -57,6 +59,9 @@ function draw(){
 function addAndDrawNode(e) {
   var x = e.pageX - elemLeft;
   var y = e.pageY - elemTop;
+  while(graph.isIDExisting(id)){
+    id++;
+  }
   graph.addNode(x,y,id);
   drawCircle(id,x,y,"green");
   id++;
@@ -131,20 +136,16 @@ function unselectCircle(node){
 }
 
 function drawArrowEdge(sommet1, sommet2){
-  var theta = Math.atan2((sommet1.y - sommet2.y),(sommet1.x - sommet2.x)) - .5*Math.PI; //Angle du segment par rapport à l'axe Y
-  //Sauvegarde le contexte pour le remettre comme il faut après les modifications
+  var theta = Math.atan2((sommet1.y - sommet2.y),(sommet1.x - sommet2.x)) - .5*Math.PI; 
   ctx.fillStyle="blue";
   ctx.beginPath();
   ctx.save();
-    // Centre le contexte au centre du sommet destination
   ctx.translate(sommet2.x,sommet2.y);
-  // Oriente le contexte en fonction de l'angle du segment par rapport à l'axe Y
   ctx.rotate(theta);
-  // Dessine la fleche (Sans l'angle : comme si elle pointait vers le haut)
   ctx.beginPath();
   ctx.moveTo(0,20);
-  ctx.lineTo(20/2,30);
-  ctx.lineTo(-20/2,30);
+  ctx.lineTo(10,30);
+  ctx.lineTo(-10,30);
   ctx.lineTo(0,20);
   ctx.fill();
   ctx.stroke();
@@ -226,7 +227,7 @@ canvas.addEventListener('dblclick', (e) => {
   if(isIntersect(mousePos, node, 1)){
     var result = -1;
     while(result == -1){
-      var userInput = prompt('type something');
+      var userInput = prompt('Modifier l\'id du noeud :');
       if(!isNaN(userInput) && userInput != ""){
         if(userInput == null){
           result = 1;
@@ -254,4 +255,19 @@ checkBox.addEventListener('change', (e) => {
     graph.modifyType("non-oriented");
   }
   draw();
+});
+
+exportButton.addEventListener("click", function () {
+  if(graph.name === null){
+    var result = -1;
+    while(result == -1){
+      var graphName = prompt('Vous devez d\'abord donner un nom au graphe :');
+      if(graphName!=null){
+        result = 1;
+        graph.modifyName(graphName);
+      }
+    }
+  }
+  var blob = new Blob([graph.exportGraph()], {type: "application/json;charset=utf-8"});
+  saveAs(blob, graph.name+".json");
 });
