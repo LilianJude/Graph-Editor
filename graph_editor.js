@@ -1,6 +1,7 @@
 var canvas = document.getElementById("graph_editor_canvas");
 var checkBox = document.getElementById("graphType");
 var exportButton = document.getElementById("export");
+var clearButton = document.getElementById("clearButton");
 checkBox.checked = false;
 var ctx = canvas.getContext('2d');
 var elemLeft = canvas.offsetLeft,
@@ -123,12 +124,12 @@ function selectCircle(node){
 
 function unselectCircle(node){
   if(node == selectedNode1){
-    selectedNode1 = null;
+    selectedNode1 = undefined;
     clearArc(ctx, node.x, node.y, rad + 1.25);
     drawCircle(node.id, node.x, node.y, "green");
     node.isSelect = false;
   } else if(node == selectedNode2){
-    selectedNode2 = null;
+    selectedNode2 = undefined;
     clearArc(ctx, node.x, node.y, rad + 1.25);
     drawCircle(node.id, node.x, node.y, "green");
     node.isSelect = false;
@@ -271,3 +272,38 @@ exportButton.addEventListener("click", function () {
   var blob = new Blob([graph.exportGraph()], {type: "application/json;charset=utf-8"});
   saveAs(blob, graph.name+".json");
 });
+window.addEventListener('keydown', (e) => {
+  const key = e.key;
+  var edgeIndex = [];
+
+  if(selectedNode1 != undefined){
+    if(key == 'Delete'){
+      for(var i = 0; i<graph.edgeList.length; i++){
+        var edge = graph.edgeList;
+        if(edge[i].nodeBegin.id == selectedNode1.id || edge[i].nodeEnd.id == selectedNode1.id){
+          edgeIndex.push(i);
+        }
+      }
+
+      for(var i in edgeIndex){
+        graph.edgeList.pop(graph.edgeList[i]);
+      }
+
+      for(var i in graph.nodeList){
+        var node = graph.nodeList;
+        if(node[i].id == selectedNode1.id){
+          var n = i;
+        }
+      }
+      unselectCircle(node[n]);
+      node.splice(n, 1);
+      draw();
+    }
+  }
+});
+
+clearButton.onclick = function(){
+  id = 0;
+  graph.reset();
+  draw();
+};

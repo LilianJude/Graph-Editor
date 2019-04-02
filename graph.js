@@ -41,7 +41,7 @@ class Graph {
 
     reset(){
         this.nodeList = [];
-        this.nodeList = [];
+        this.edgeList = [];
     };
 
     exportGraph(){
