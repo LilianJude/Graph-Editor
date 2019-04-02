@@ -38,6 +38,9 @@ function draw(){
   for(var i = 0; i < graph.edgeList.length; i++){
     var edge = graph.edgeList[i];
     drawSegment(edge.nodeBegin, edge.nodeEnd);
+    if(graph.graphType == "oriented"){
+      drawArrowEdge(edge.nodeBegin, edge.nodeEnd);
+    }
   }
 
   for (var i = 0; i < graph.nodeList.length; i++) {
@@ -48,6 +51,7 @@ function draw(){
         drawCircle(node.id, node.x, node.y, "green");
       }
   }
+
 }
 
 function addAndDrawNode(e) {
@@ -61,6 +65,9 @@ function addAndDrawNode(e) {
 function addAndDrawEdge(node1, node2){
   graph.addEdge(node1, node2);
   drawSegment(node1, node2);
+  if(graph.graphType == "oriented"){
+    drawArrowEdge(node1, node2);
+  }
 }
 
 function clearArc(context, x, y, radius) {
@@ -123,14 +130,25 @@ function unselectCircle(node){
   }
 }
 
-function drawGraphOrientedMode(){
-  graph.modifyType('oriented');
+function drawArrowEdge(sommet1, sommet2){
+  var theta = Math.atan2((sommet1.y - sommet2.y),(sommet1.x - sommet2.x)) - .5*Math.PI; //Angle du segment par rapport à l'axe Y
+  //Sauvegarde le contexte pour le remettre comme il faut après les modifications
   ctx.fillStyle="blue";
   ctx.beginPath();
-  var rapport = graph.edgeList[0].nodeEnd.x / graph.edgeList[0].nodeEnd.x;
-  ctx.arc(graph.edgeList[0].nodeBegin.x+rad*Math.cos(rapport),graph.edgeList[0].nodeEnd.x+rad*Math.cos(rapport),rad-15,0,Math.PI*2);
-  ctx.stroke();
+  ctx.save();
+    // Centre le contexte au centre du sommet destination
+  ctx.translate(sommet2.x,sommet2.y);
+  // Oriente le contexte en fonction de l'angle du segment par rapport à l'axe Y
+  ctx.rotate(theta);
+  // Dessine la fleche (Sans l'angle : comme si elle pointait vers le haut)
+  ctx.beginPath();
+  ctx.moveTo(0,20);
+  ctx.lineTo(20/2,30);
+  ctx.lineTo(-20/2,30);
+  ctx.lineTo(0,20);
   ctx.fill();
+  ctx.stroke();
+  ctx.restore();
 }
 
 canvas.addEventListener('mousedown', (e) => {
@@ -220,6 +238,9 @@ canvas.addEventListener('dblclick', (e) => {
 
 checkBox.addEventListener('change', (e) => {
   if (checkBox.checked == true){
-    drawGraphOrientedMode();
+    graph.modifyType("oriented");
+  }else{
+    graph.modifyType("non-oriented");
   }
+  draw();
 });
