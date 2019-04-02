@@ -2,6 +2,7 @@ var canvas = document.getElementById("graph_editor_canvas");
 var checkBox = document.getElementById("graphType");
 var exportButton = document.getElementById("export");
 var clearButton = document.getElementById("clearButton");
+var jsonFile = document.getElementById("readFile");
 checkBox.checked = false;
 var ctx = canvas.getContext('2d');
 var elemLeft = canvas.offsetLeft,
@@ -257,6 +258,16 @@ checkBox.addEventListener('change', (e) => {
   }
   draw();
 });
+
+jsonFile.addEventListener('change', (e) => {
+    var input = event.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+     graph.parseJSON(reader.result);
+    };
+    reader.readAsText(input.files[0]);
+});
+
 
 exportButton.addEventListener("click", function () {
   if(graph.name === null){

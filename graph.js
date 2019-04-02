@@ -46,7 +46,7 @@ class Graph {
 
     exportGraph(){
         var stream = "{\"graph\": {";
-        stream+="\"name\": " + "\"test\",";
+        stream+="\"name\": " + "\"" + this.name + "\",";
         stream+="\"directed\":";
         stream += this.graphType == "oriented" ? "\"true\"," : "\"false\",";
         stream += "\"vertices\": [";
@@ -58,11 +58,22 @@ class Graph {
         }
         stream += "],\"edges\": [";
         for(var i = 0; i < this.edgeList.length; i++){
-            stream += " { \"id1\": \"" + this.edgeList[i].nodeBegin.id + "\", \"id2\": \"" + this.edgeList[i].nodeEnd.id + "\" }" + (i == this.edgeList.length-1 ? "" : ",");
+            stream += " { \"id1\": \"" + this.edgeList[i].nodeBegin.id;
+            stream += "\", \"id2\": \"" + this.edgeList[i].nodeEnd.id;
+            stream += "\" }" + (i == this.edgeList.length-1 ? "" : ",");
         }
         stream+="]}}";
         return stream;
     };
+
+    parseJSON(stream){
+        this.reset();
+        var obj = JSON.parse(stream);
+        var jsonGraph = obj.graph;
+        this.modifyName(jsonGraph.name);
+        this.modifyType((jsonGraph.directed=="false" ? "non-oriented" : "oriented"));
+        console.log(this.graphType + " " + this.name);
+    }
 
     isIDExisting(id){
         for(var i in this.nodeList){
