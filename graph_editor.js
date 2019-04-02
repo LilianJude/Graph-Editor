@@ -209,9 +209,20 @@ canvas.addEventListener('dblclick', (e) => {
     var result = -1;
     while(result == -1){
       var userInput = prompt('type something');
-      if(!isNaN(userInput)){
-        result = 1;
-        node.modifyID(userInput);
+      if(!isNaN(userInput) && userInput != ""){
+        if(userInput == null){
+          result = 1;
+        }else{
+          for(var i in graph.nodeList){
+            if(parseInt(userInput) == graph.nodeList[i].id){
+              alert("Cette étiquette est déjà attribuée à un autre noeud.")
+              return;
+            }
+          }
+          result = 1;
+          node.modifyID(userInput);
+        }
+        draw();
       }
     }
   }
