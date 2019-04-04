@@ -56,6 +56,7 @@ function draw(){
       }
   }
 
+
 }
 
 function addAndDrawNode(e) {
@@ -264,8 +265,12 @@ jsonFile.addEventListener('change', (e) => {
     var reader = new FileReader();
     reader.onload = function(){
      graph.parseJSON(reader.result);
-    };
+    }
     reader.readAsText(input.files[0]);
+    reader.onloadend = function(){
+      selectedNode1 = undefined;
+      draw();
+    }
 });
 
 

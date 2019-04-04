@@ -42,6 +42,7 @@ class Graph {
     reset(){
         this.nodeList = [];
         this.edgeList = [];
+        console.log("The edge and node array have been cleared.");
     };
 
     exportGraph(){
@@ -63,16 +64,29 @@ class Graph {
             stream += "\" }" + (i == this.edgeList.length-1 ? "" : ",");
         }
         stream+="]}}";
+        console.log("The graph has been stored in a json file.");
         return stream;
     };
 
     parseJSON(stream){
         this.reset();
         var obj = JSON.parse(stream);
-        var jsonGraph = obj.graph;
-        this.modifyName(jsonGraph.name);
-        this.modifyType((jsonGraph.directed=="false" ? "non-oriented" : "oriented"));
-        console.log(this.graphType + " " + this.name);
+        if(obj.graph != undefined){
+            var jsonGraph = obj.graph;
+            this.modifyName(jsonGraph.name);
+            this.modifyType((jsonGraph.directed=="false" ? "non-oriented" : "oriented"));
+            var nodes = jsonGraph.vertices;
+            for (var i = 0; i < nodes.length; i++) {
+                this.addNode(parseInt(nodes[i].pos.x), parseInt(nodes[i].pos.y),parseInt(nodes[i].label));
+            }
+            var edges = jsonGraph.edges;
+            for (var i = 0; i < edges.length; i++) {
+                this.addEdge(this.nodeList[edges[i].id1], this.nodeList[edges[i].id2]);
+            }
+            console.log("The importation is finished.");
+        }else{
+            alert("Le fichier ne respecte pas le format demandé.");
+        }
     }
 
     isIDExisting(id){
