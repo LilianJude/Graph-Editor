@@ -4,6 +4,9 @@ class Node {
         this.x = x;
         this.y = y;
         this.id = id;
+        this.pageRank = [];
+        this.outDegree = [];
+        this.inDegree = [];
         this.isSelect = false;
         this.isDragging = false;
     };

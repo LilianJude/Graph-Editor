@@ -2,6 +2,8 @@ var canvas = document.getElementById("graph_editor_canvas");
 var checkBox = document.getElementById("graphType");
 var exportButton = document.getElementById("export");
 var clearButton = document.getElementById("clearButton");
+var pageRank = document.getElementById("pageRank");
+
 checkBox.checked = false;
 var ctx = canvas.getContext('2d');
 var elemLeft = canvas.offsetLeft,
@@ -137,7 +139,7 @@ function unselectCircle(node){
 }
 
 function drawArrowEdge(sommet1, sommet2){
-  var theta = Math.atan2((sommet1.y - sommet2.y),(sommet1.x - sommet2.x)) - .5*Math.PI; 
+  var theta = Math.atan2((sommet1.y - sommet2.y),(sommet1.x - sommet2.x)) - .5*Math.PI;
   ctx.fillStyle="blue";
   ctx.beginPath();
   ctx.save();
@@ -307,3 +309,108 @@ clearButton.onclick = function(){
   graph.reset();
   draw();
 };
+
+pageRank.onclick = function(){
+    var done = false;
+    var distance = 0;
+    var currentRank;
+    var nodesCount = graph.nodeList.length;
+
+    if(graph.graphType != "oriented"){
+      return;
+    }
+
+    for(var i in graph.nodeList){
+      graph.nodeList[i].value = 1/nodesCount;
+    }
+
+    for(var j = 0; j < graph.edgeList.length; j++){
+      graph.nodeList[graph.edgeList[j].nodeBegin.id].outDegree.push(graph.edgeList[j].nodeEnd);
+      graph.nodeList[graph.edgeList[j].nodeEnd.id].inDegree.push(graph.edgeList[j].nodeBegin);
+    }
+
+    alert("PAGERANK");
+    var pageName = [];
+    var vecteur1 = [];
+    var vecteur2 = [];
+    var nbIteration=0;
+    for(var i=0;i<graph.nodeList.length;i++){
+      var currentNode = graph.nodeList[i];
+      currentNode.pageRank[0] = 1/graph.nodeList.length;
+      vecteur1.push(currentNode.pageRank[0]);
+      pageName.push(currentNode.id);
+    }
+    for(var i=0;i<graph.nodeList.length;i++){
+      var currentNode = graph.nodeList[i];
+      var linkedVertices = currentNode.inDegree;
+      var newPageRank = 0;
+      for(var j=0;j<linkedVertices.length;j++){
+        var linkedNode = linkedVertices[j];
+        if(linkedNode.inDegree.length>0){
+          newPageRank += linkedNode.pageRank[nbIteration]/linkedNode.inDegree.length;
+        }
+      }
+      if(newPageRank==0){
+        newPageRank = currentNode.pageRank[nbIteration];
+      }
+      currentNode.pageRank[nbIteration+1] = newPageRank;
+      vecteur2.push(currentNode.pageRank[nbIteration+1]);
+    }
+    while(!testArret(vecteur1, vecteur2)){
+      nbIteration++;
+      vecteur1 = vecteur2;
+      vecteur2 = [];
+      for(var i=0;i<graph.nodeList.length;i++){
+        var currentNode = graph.nodeList[i];
+        var linkedVertices = currentNode.inDegree;
+        var newPageRank = 0;
+        for(var j=0;j<linkedVertices.length;j++){
+          var linkedNode = linkedVertices[j];
+          if(linkedNode.inDegree.length>0){
+            newPageRank += linkedNode.pageRank[nbIteration]/linkedNode.inDegree.length;
+          }
+        }
+        if(newPageRank==0){
+          newPageRank = currentNode.pageRank[nbIteration];
+        }
+        currentNode.pageRank[nbIteration+1] = newPageRank;
+        vecteur2.push(currentNode.pageRank[nbIteration+1]);
+      }
+    }
+    // console.log(nbIteration);
+    console.log(pageName);
+    console.log(vecteur2);
+
+  };
+
+  function scalaire(ary1, ary2) {
+      if (ary1.length != ary2.length)
+          throw "Les vecteurs ne sont pas de la même taille";
+      var dotprod = 0;
+      for (var i = 0; i < ary1.length; i++)
+          dotprod += ary1[i] * ary2[i];
+      return dotprod;
+  }
+
+  function normeVecteur(v){
+      var somme = 0;
+
+      for(var i in v)
+      {
+          somme += Math.pow(v[i], 2);
+      }
+
+      return Math.sqrt(somme);
+  }
+
+  function testArret(v1, v2){
+
+      normeV1 = normeVecteur(v1);
+      normeV2 = normeVecteur(v2);
+
+      var cosTeta = scalaire(v1, v2) / (normeV1 * normeV2);
+
+      if(cosTeta >= 0.99999)
+          return true;
+      return false;
+  }
