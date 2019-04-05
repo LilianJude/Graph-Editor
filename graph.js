@@ -42,11 +42,12 @@ class Graph {
     reset(){
         this.nodeList = [];
         this.edgeList = [];
+        console.log("The edge and node array have been cleared.");
     };
 
     exportGraph(){
         var stream = "{\"graph\": {";
-        stream+="\"name\": " + "\"test\",";
+        stream+="\"name\": " + "\"" + this.name + "\",";
         stream+="\"directed\":";
         stream += this.graphType == "oriented" ? "\"true\"," : "\"false\",";
         stream += "\"vertices\": [";
@@ -58,11 +59,35 @@ class Graph {
         }
         stream += "],\"edges\": [";
         for(var i = 0; i < this.edgeList.length; i++){
-            stream += " { \"id1\": \"" + this.edgeList[i].nodeBegin.id + "\", \"id2\": \"" + this.edgeList[i].nodeEnd.id + "\" }" + (i == this.edgeList.length-1 ? "" : ",");
+            stream += " { \"id1\": \"" + this.edgeList[i].nodeBegin.id;
+            stream += "\", \"id2\": \"" + this.edgeList[i].nodeEnd.id;
+            stream += "\" }" + (i == this.edgeList.length-1 ? "" : ",");
         }
         stream+="]}}";
+        console.log("The graph has been stored in a json file.");
         return stream;
     };
+
+    parseJSON(stream){
+        this.reset();
+        var obj = JSON.parse(stream);
+        if(obj.graph != undefined){
+            var jsonGraph = obj.graph;
+            this.modifyName(jsonGraph.name);
+            this.modifyType((jsonGraph.directed=="false" ? "non-oriented" : "oriented"));
+            var nodes = jsonGraph.vertices;
+            for (var i = 0; i < nodes.length; i++) {
+                this.addNode(parseInt(nodes[i].pos.x), parseInt(nodes[i].pos.y),parseInt(nodes[i].label));
+            }
+            var edges = jsonGraph.edges;
+            for (var i = 0; i < edges.length; i++) {
+                this.addEdge(this.nodeList[edges[i].id1], this.nodeList[edges[i].id2]);
+            }
+            console.log("The importation is finished.");
+        }else{
+            alert("Le fichier ne respecte pas le format demandé.");
+        }
+    }
 
     isIDExisting(id){
         for(var i in this.nodeList){

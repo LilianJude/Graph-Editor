@@ -2,8 +2,12 @@ var canvas = document.getElementById("graph_editor_canvas");
 var checkBox = document.getElementById("graphType");
 var exportButton = document.getElementById("export");
 var clearButton = document.getElementById("clearButton");
+<<<<<<< HEAD
 var pageRank = document.getElementById("pageRank");
 
+=======
+var jsonFile = document.getElementById("readFile");
+>>>>>>> 229ad51b37ab7699cddedd07ba01813c8f50f605
 checkBox.checked = false;
 var ctx = canvas.getContext('2d');
 var elemLeft = canvas.offsetLeft,
@@ -56,6 +60,7 @@ function draw(){
         drawCircle(node.id, node.x, node.y, "green");
       }
   }
+
 
 }
 
@@ -259,6 +264,20 @@ checkBox.addEventListener('change', (e) => {
   }
   draw();
 });
+
+jsonFile.addEventListener('change', (e) => {
+    var input = event.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+     graph.parseJSON(reader.result);
+    }
+    reader.readAsText(input.files[0]);
+    reader.onloadend = function(){
+      selectedNode1 = undefined;
+      draw();
+    }
+});
+
 
 exportButton.addEventListener("click", function () {
   if(graph.name === null){
